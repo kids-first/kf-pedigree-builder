@@ -1,2 +1,9 @@
 [tool.black]
 line-length = 80
+
+[tool.isort]
+profile = "black"
+sections = ["FUTURE","STDLIB","D3B","FIRSTPARTY","THIRDPARTY","LOCALFOLDER"]
+known_local_folder = ["kf_pedigree"]
+known_d3b = ["kf_utils", "d3b_utils"]
+
