@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+
+import click
+
+import kf_pedigree.common
+from kf_pedigree.generate_pedigree_report import generate_report
+
+
+@click.group()
+def pedi_cli():
+    pass
+
+
+@click.command(name="build_pedi_report")
+@click.option(
+    "--study_id",
+    nargs=1,
+    required=False,
+    help="Provide study_id to get manifest for all participants in the study",
+)
+@click.option(
+    "--participant_csv",
+    nargs=1,
+    required=False,
+    help="Provide path to txt file with one participant per line",
+)
+@click.option(
+    "--db_url",
+    nargs=1,
+    required=False,
+    help="conection url (with credentials) to postgres",
+)
+@click.option("--api_url", nargs=1, required=False, help="dataservice url")
+@click.option(
+    "--output_file",
+    nargs=1,
+    required=False,
+    help="output file location to save pedigree report",
+)
+@click.option(
+    "--visible_participants_only",
+    help="Only return visible participants in the report",
+    is_flag=True,
+)
+@click.option(
+    "--use_external_ids",
+    help="use external ids instead of kf ids",
+    is_flag=True,
+)
+def build_pedi_report(
+    study_id,
+    participant_csv,
+    db_url,
+    api_url,
+    output_file,
+    visible_participants_only,
+    use_external_ids,
+):
+    generate_report(
+        study_id,
+        participant_csv,
+        db_url,
+        api_url,
+        output_file,
+        visible_participants_only,
+        use_external_ids,
+    )
+
+
+pedi_cli.add_command(build_pedi_report)
+
+if __name__ == "__main__":
+    pedi_cli()

@@ -1,0 +1,2 @@
+2022-03-04 10:34:35,217 - kf_pedigree.generate_pedigree_report - generate_report - INFO - setting api url to https://kf-api-dataservice.kidsfirstdrc.org
+2022-03-04 10:34:35,217 - kf_pedigree.generate_pedigree_report - generate_report - INFO - Generating pedigree report from study id
