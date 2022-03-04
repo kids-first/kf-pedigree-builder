@@ -22,9 +22,9 @@ contact [our support](mailto:support@kidsfirstdrc.org).
 
 To generate pedigree reports, clone this repo:
 
-'''sh
-git clone <https://github.com/kids-first/kf-utils-python.git>
-'''
+```sh
+git clone https://github.com/kids-first/kf-utils-python.git
+```
 
 ## How to Use
 
