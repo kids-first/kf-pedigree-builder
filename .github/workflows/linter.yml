@@ -26,4 +26,5 @@ jobs:
           VALIDATE_BASH: false
           VALIDATE_GITHUB_ACTIONS: false
           PYTHON_BLACK_CONFIG_FILE: pyproject.toml
+          MARKDOWN_CONFIG_FILE: .markdownlint.yml
           LINTER_RULES_PATH: /
