@@ -73,4 +73,7 @@ def postgres_test(db_url):
         return False
 
 
-kf_api_url = "https://kf-api-dataservice.kidsfirstdrc.org"
+KF_API_URLS = {
+    "kf_dataservice_url": "https://kf-api-dataservice.kidsfirstdrc.org",
+    "kf_dataserviceqa_url": "https://kf-api-dataservice.kidsfirstdrc.org",
+}
