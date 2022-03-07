@@ -6,7 +6,7 @@ import pandas as pd
 import psycopg2
 from tqdm import tqdm
 
-from kf_pedigree.common import get_logger, postgres_test
+from kf_pedigree.common import KF_API_URLS, get_logger, postgres_test
 
 logger = get_logger(__name__, testing_mode=False)
 
@@ -43,6 +43,19 @@ def _find_family_from_study_with_db_conn(db_url, family_list):
 
 
 def _find_family_from_study_with_http_api(api_url, family_list):
+    if api_url == KF_API_URLS.get(
+        "kf_dataservice_url"
+    ) or api_url == KF_API_URLS.get("kf_dataserviceqa_url"):
+        logger.debug("detected dataservice api")
+        return _find_family_from_study_with_dataservice_api(
+            api_url, family_list
+        )
+    else:
+        logger.error("Could not identify supplied api_url")
+        sys.exit()
+
+
+def _find_family_from_study_with_dataservice_api(api_url, family_list):
     logger.info(f"fetching families from {len(family_list)} families")  # noqa
     families = []
     for family in tqdm(family_list):

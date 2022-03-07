@@ -1,6 +1,6 @@
 import sys
 
-from kf_pedigree.common import get_logger, kf_api_url
+from kf_pedigree.common import KF_API_URLS, get_logger
 from kf_pedigree.family_relationship import find_fr_from_participant_list
 from kf_pedigree.output import build_report, save_pedigree
 from kf_pedigree.study import find_pts_from_study
@@ -37,16 +37,13 @@ def generate_report(
     study_id=None,
     participant_csv=None,
     db_url=None,
-    api_url="https://kf-api-dataservice.kidsfirstdrc.org",
+    api_url=KF_API_URLS["kf_dataservice_url"],
     output_file="pedigree_report.csv",
     only_visible=True,
     use_external_ids=False,
 ):
     # validating
     error = False
-    if not api_url:
-        api_url = kf_api_url
-        logger.info(f"setting api url to {api_url}")
 
     if db_url:
         connection_url = db_url
