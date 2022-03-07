@@ -8,7 +8,7 @@ from kf_utils.dataservice.scrape import yield_entities_from_filter
 import pandas as pd
 import psycopg2
 
-from kf_pedigree.common import get_logger, postgres_test
+from kf_pedigree.common import KF_API_URLS, get_logger, postgres_test
 
 logger = get_logger(__name__, testing_mode=False)
 
@@ -52,6 +52,17 @@ SELECT p.kf_id,
 
 
 def _find_pts_from_study_with_http_api(api_url, study_id):
+    if api_url == KF_API_URLS.get(
+        "kf_dataservice_url"
+    ) or api_url == KF_API_URLS.get("kf_dataserviceqa_url"):
+        logger.debug("detected dataservice api")
+        return _find_pts_from_study_with_dataservice_api(api_url, study_id)
+    else:
+        logger.error("Could not identify supplied api_url")
+        sys.exit()
+
+
+def _find_pts_from_study_with_dataservice_api(api_url, study_id):
     logger.info(f"fetching participants in {study_id}")
     participants = [
         p

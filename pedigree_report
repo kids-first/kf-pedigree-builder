@@ -2,7 +2,7 @@
 
 import click
 
-import kf_pedigree.common
+from kf_pedigree.common import KF_API_URLS
 from kf_pedigree.generate_pedigree_report import generate_report
 
 
@@ -30,7 +30,13 @@ def pedi_cli():
     required=False,
     help="conection url (with credentials) to postgres",
 )
-@click.option("--api_url", nargs=1, required=False, help="dataservice url")
+@click.option(
+    "--api_url",
+    nargs=1,
+    type=click.Choice(KF_API_URLS.keys()),
+    required=False,
+    help="api url to query",
+)
 @click.option(
     "--output_file",
     nargs=1,
@@ -56,6 +62,7 @@ def build_pedi_report(
     visible_participants_only,
     use_external_ids,
 ):
+    api_url = KF_API_URLS.get(api_url)
     generate_report(
         study_id,
         participant_csv,
