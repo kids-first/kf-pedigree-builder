@@ -59,7 +59,7 @@ def pedi_cli():
 def build_pedi_report(
     study_id,
     participant_csv,
-    family_list,
+    family_id,
     db_url,
     api_url,
     output_file,
@@ -69,7 +69,7 @@ def build_pedi_report(
     generate_report(
         study_id,
         participant_csv,
-        family_list,
+        family_id,
         db_url,
         api_url,
         output_file,

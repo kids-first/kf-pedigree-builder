@@ -75,6 +75,8 @@ def find_pts_from_family(api_or_db_url, family_list):
 
 
 def _find_pts_from_family_with_db_conn(db_url, family_list):
+    if len(family_list) == 1:
+        family_list = [family_list[0]]
     # Test connection to the database
     if not postgres_test(db_url):
         logger.error("Can't connect to the database")
