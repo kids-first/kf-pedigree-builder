@@ -2,7 +2,6 @@
 
 import click
 
-import kf_pedigree.common
 from kf_pedigree.generate_pedigree_report import generate_report
 
 
@@ -13,16 +12,25 @@ def pedi_cli():
 
 @click.command(name="build_pedi_report")
 @click.option(
+    "-s",
     "--study_id",
     nargs=1,
     required=False,
     help="Provide study_id to get manifest for all participants in the study",
 )
 @click.option(
+    "-c",
     "--participant_csv",
     nargs=1,
     required=False,
     help="Provide path to txt file with one participant per line",
+)
+@click.option(
+    "-f",
+    "--family_id",
+    multiple=True,
+    type=str,
+    help="""Family KF_ID to generate pedigree for""",
 )
 @click.option(
     "--db_url",
@@ -32,6 +40,7 @@ def pedi_cli():
 )
 @click.option("--api_url", nargs=1, required=False, help="dataservice url")
 @click.option(
+    "-o",
     "--output_file",
     nargs=1,
     required=False,
@@ -50,6 +59,7 @@ def pedi_cli():
 def build_pedi_report(
     study_id,
     participant_csv,
+    family_list,
     db_url,
     api_url,
     output_file,
@@ -59,6 +69,7 @@ def build_pedi_report(
     generate_report(
         study_id,
         participant_csv,
+        family_list,
         db_url,
         api_url,
         output_file,
