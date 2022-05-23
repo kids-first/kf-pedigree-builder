@@ -1,6 +1,7 @@
 import sys
 
 from d3b_utils.requests_retry import Session
+from kf_utils.dataservice.scrape import yield_entities_from_filter
 
 import pandas as pd
 import psycopg2
@@ -64,3 +65,84 @@ def _find_family_from_study_with_http_api(api_url, family_list):
     df = pd.DataFrame(families)
     df = df[["kf_id", "external_id", "visible"]]
     return df
+
+
+def find_pts_from_family(api_or_db_url, family_list):
+    if api_or_db_url.startswith(("http:", "https:")):
+        return _find_pts_from_family_with_http_api(api_or_db_url, family_list)
+    else:
+        return _find_pts_from_family_with_db_conn(api_or_db_url, family_list)
+
+
+def _find_pts_from_family_with_db_conn(db_url, family_list):
+    if len(family_list) == 1:
+        family_list = [family_list[0]]
+    # Test connection to the database
+    if not postgres_test(db_url):
+        logger.error("Can't connect to the database")
+        sys.exit()
+    with psycopg2.connect(db_url) as conn:
+        logger.info(f"fetching participants in {family_list}")
+        participants = pd.read_sql(
+            f"""
+SELECT p.kf_id,
+       p.external_id,
+       p.affected_status,
+       p.is_proband,
+       p.ethnicity,
+       p.race,
+       p.gender,
+       p.visible,
+       p.family_id,
+       p.study_id
+  FROM participant p
+ WHERE p.family_id in ({str(family_list)[1:-1]})
+ """,
+            conn,
+        )
+        logger.debug(f"{len(participants)} participants found")
+        if len(participants) == 0:
+            logger.error("No participants found")
+            sys.exit()
+    return participants
+
+
+def _find_pts_from_family_with_http_api(api_url, family_list):
+    logger.info(f"fetching participants in {family_list}")
+    participants = []
+    for f in family_list:
+        family_participants = [
+            p
+            for p in yield_entities_from_filter(
+                api_url,
+                "participants",
+                {"family_id": f},
+                show_progress=True,
+            )
+        ]
+        logger.debug(f"{f}: {len(family_participants)} participants found")
+        if not family_participants:
+            logger.erro("No participants found")
+            sys.exit()
+        participants.append(family_participants)
+    df = pd.DataFrame(participants)
+    # get the links
+    links = (
+        df["_links"]
+        .apply(pd.Series)[["family", "self", "study"]]
+        .apply(lambda x: x.str.rpartition("/")[2], axis=1)
+    )
+    links.columns = ["family_id", "kf_id", "study_id"]
+    df = df[
+        [
+            "kf_id",
+            "external_id",
+            "affected_status",
+            "is_proband",
+            "ethnicity",
+            "race",
+            "gender",
+            "visible",
+        ]
+    ]
+    return df.merge(links, how="outer", on="kf_id")

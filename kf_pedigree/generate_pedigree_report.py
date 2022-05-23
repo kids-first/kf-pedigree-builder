@@ -1,6 +1,7 @@
 import sys
 
-from kf_pedigree.common import get_logger, kf_api_url
+from kf_pedigree.common import KF_API_URLS, get_logger
+from kf_pedigree.family import find_pts_from_family
 from kf_pedigree.family_relationship import find_fr_from_participant_list
 from kf_pedigree.output import build_report, save_pedigree
 from kf_pedigree.study import find_pts_from_study
@@ -36,18 +37,15 @@ def parent(x):
 def generate_report(
     study_id=None,
     participant_csv=None,
+    family_list=None,
     db_url=None,
-    api_url="https://kf-api-dataservice.kidsfirstdrc.org",
+    api_url=KF_API_URLS.get("kf_dataservice_url"),
     output_file="pedigree_report.csv",
     only_visible=True,
     use_external_ids=False,
 ):
     # validating
     error = False
-    if not api_url:
-        api_url = kf_api_url
-        logger.info(f"setting api url to {api_url}")
-
     if db_url:
         connection_url = db_url
     else:
@@ -56,6 +54,9 @@ def generate_report(
     if study_id:
         logger.info("Generating pedigree report from study id")
         participants = find_pts_from_study(connection_url, study_id)
+    elif family_list:
+        logger.info("Generating pedigree report from family_id(s)")
+        participants = find_pts_from_family(connection_url, family_list)
     elif participant_csv:
         logger.info("Generating pedigree report from participant list")
         # load the participant list and then get the participant info
@@ -73,7 +74,7 @@ def generate_report(
         connection_url, participants["kf_id"].to_list()
     )
     # filter family relationships to only include information for participants
-    #  that are released
+    # that are released
     family_relationships = family_relationships[
         (family_relationships["participant1"].isin(participants["kf_id"]))
         & (family_relationships["participant2"].isin(participants["kf_id"]))
