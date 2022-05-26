@@ -40,3 +40,13 @@ database:
     --db_url $DATABASE_URL \
     --output_file my_pedigree_file.txt
 ```
+
+To generate a pedigree file for mulitple studies using the Kids First PostgreSQL
+database:
+
+```sh
+./pedigree_report build_pedi_report \
+    -s SD_ME0WME0W -s SD_12345678 \
+    --db_url $DATABASE_URL \
+    --output_file my_pedigree_file.txt
+```
