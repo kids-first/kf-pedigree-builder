@@ -85,6 +85,4 @@ def generate_report(
         use_external_ids=use_external_ids,
         api_or_db_url=connection_url,
     )
-    if not output_file:
-        output_file = "pedigree_report.csv"
     save_pedigree(report, output_file)
