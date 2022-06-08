@@ -50,3 +50,13 @@ database:
     --db_url $DATABASE_URL \
     --output_file my_pedigree_file.txt
 ```
+
+To generate an additional participant-level metadata file, use the `-m` flag:
+
+```sh
+./pedigree_report build_pedi_report \
+    --study_id SD_ME0WME0W \
+    --db_url $DATABASE_URL \
+    --output_file my_pedigree_file.txt
+    -m
+```
