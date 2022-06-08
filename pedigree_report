@@ -45,6 +45,8 @@ def pedi_cli():
     nargs=1,
     required=False,
     help="output file location to save pedigree report",
+    default="pedigree_report.csv",
+    type=str,
 )
 @click.option(
     "--visible_participants_only",
@@ -56,6 +58,12 @@ def pedi_cli():
     help="use external ids instead of kf ids",
     is_flag=True,
 )
+@click.option(
+    "-m",
+    "--metadata",
+    help="Generate a report of participant demographic data",
+    is_flag=True,
+)
 def build_pedi_report(
     study_id,
     participant_csv,
@@ -65,6 +73,7 @@ def build_pedi_report(
     output_file,
     visible_participants_only,
     use_external_ids,
+    metadata,
 ):
     generate_report(
         study_id,
@@ -75,6 +84,7 @@ def build_pedi_report(
         output_file,
         visible_participants_only,
         use_external_ids,
+        metadata,
     )
 
 
