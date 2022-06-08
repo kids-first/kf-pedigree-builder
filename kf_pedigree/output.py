@@ -2,6 +2,7 @@ import pandas as pd
 
 from kf_pedigree.common import get_logger
 from kf_pedigree.family import find_family_from_family_list
+from kf_pedigree.study import find_studies_from_study
 
 logger = get_logger(__name__, testing_mode=False)
 
@@ -143,7 +144,20 @@ def build_report(
     return pedigree
 
 
-def save_pedigree(df, output_file, index=False, header=True):
+def build_metadata_report(
+    participants,
+    api_or_db_url=None,
+):
+    # Get the study info
+    logger.info("Generating metadata report")
+    studies = find_studies_from_study(
+        api_or_db_url, participants["study_id"].drop_duplicates().to_list()
+    )
+    meta = participants.merge(studies, on="study_id", how="left")
+    return meta
+
+
+def save_report(df, output_file, index=False, header=True):
     delimiters = {"tsv": "\t", "csv": ",", "txt": "\t"}
     delim = delimiters[output_file.rsplit(".", 1)[-1].lower()]
     logger.info(f"saving report to {output_file}")

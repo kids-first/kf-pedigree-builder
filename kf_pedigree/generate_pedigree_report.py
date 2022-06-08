@@ -3,7 +3,7 @@ import sys
 from kf_pedigree.common import KF_API_URLS, get_logger
 from kf_pedigree.family import find_pts_from_family
 from kf_pedigree.family_relationship import find_fr_from_participant_list
-from kf_pedigree.output import build_report, save_pedigree
+from kf_pedigree.output import build_metadata_report, build_report, save_report
 from kf_pedigree.study import find_pts_from_study
 
 logger = get_logger(__name__, testing_mode=False)
@@ -43,6 +43,7 @@ def generate_report(
     output_file="pedigree_report.csv",
     only_visible=True,
     use_external_ids=False,
+    metadata=False,
 ):
     # validating
     error = False
@@ -85,6 +86,12 @@ def generate_report(
         use_external_ids=use_external_ids,
         api_or_db_url=connection_url,
     )
-    if not output_file:
-        output_file = "pedigree_report.csv"
-    save_pedigree(report, output_file)
+
+    save_report(report, output_file)
+    if metadata:
+        metadata_report = build_metadata_report(
+            participants=participants,
+            api_or_db_url=connection_url,
+        )
+        parts = output_file.rsplit(".", 1)
+        save_report(metadata_report, (parts[0] + "-metadata." + parts[1]))
