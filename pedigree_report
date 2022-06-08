@@ -14,7 +14,7 @@ def pedi_cli():
 @click.option(
     "-s",
     "--study_id",
-    nargs=1,
+    multiple=True,
     required=False,
     help="Provide study_id to get manifest for all participants in the study",
 )

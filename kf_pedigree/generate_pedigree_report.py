@@ -35,7 +35,7 @@ def parent(x):
 
 
 def generate_report(
-    study_id=None,
+    study_list=None,
     participant_csv=None,
     family_list=None,
     db_url=None,
@@ -51,9 +51,9 @@ def generate_report(
     else:
         connection_url = api_url
 
-    if study_id:
+    if study_list:
         logger.info("Generating pedigree report from study id")
-        participants = find_pts_from_study(connection_url, study_id)
+        participants = find_pts_from_study(connection_url, study_list)
     elif family_list:
         logger.info("Generating pedigree report from family_id(s)")
         participants = find_pts_from_family(connection_url, family_list)
