@@ -1,5 +1,18 @@
 # Kids First Pedigree Builder Change History
 
+## Release 0.1.1
+
+### Summary
+
+- Emojis: 🐛 x1, ✏️ x1
+- Categories: Fixes x2
+
+### New features and changes
+
+- [#12](https://github.com/kids-first/kf-pedigree-builder/pull/12) - 🐛 fix issue with api url func not working for participant discovery - [03cc2107](https://github.com/kids-first/kf-pedigree-builder/commit/03cc2107e7e1a34922d7056526e050bdc725d72f) by [chris-s-friedman](https://github.com/chris-s-friedman)
+- [#11](https://github.com/kids-first/kf-pedigree-builder/pull/11) - ✏️ set output file name - [d663a766](https://github.com/kids-first/kf-pedigree-builder/commit/d663a76632521cafd4b7117c78816096549002d3) by [chris-s-friedman](https://github.com/chris-s-friedman)
+
+
 ## Release 0.1.0
 
 ### Summary
