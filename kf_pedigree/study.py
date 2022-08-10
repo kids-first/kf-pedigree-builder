@@ -16,6 +16,16 @@ from kf_pedigree.common import get_logger, postgres_test
 logger = get_logger(__name__, testing_mode=False)
 
 
+def study_db_connection(db_url, study_list):
+    # Test connection to the database
+    if not postgres_test(db_url):
+        logger.error("Can't connect to the database")
+        sys.exit()
+    if len(study_list) == 1:
+        study_list = [study_list[0]]
+    return study_list
+
+
 def find_pts_from_study(api_or_db_url, study_list):
     if api_or_db_url.startswith(("http:", "https:")):
         return _find_pts_from_study_with_http_api(api_or_db_url, study_list)
@@ -24,12 +34,7 @@ def find_pts_from_study(api_or_db_url, study_list):
 
 
 def _find_pts_from_study_with_db_conn(db_url, study_list):
-    if len(study_list) == 1:
-        study_list = [study_list[0]]
-    # Test connection to the database
-    if not postgres_test(db_url):
-        logger.error("Can't connect to the database")
-        sys.exit()
+    study_list = study_db_connection(db_url, study_list)
     with psycopg2.connect(db_url) as conn:
         logger.info(f"fetching participants in {study_list}")
         participants = pd.read_sql(
@@ -71,7 +76,7 @@ def _find_pts_from_study_with_http_api(api_url, study_list):
             logger.erro("No participants found")
             sys.exit()
         participants.append(study_participants)
-    df = pd.DataFrame(participants)
+    df = pd.DataFrame(participants[0])
     # get the links
     links = (
         df["_links"]
@@ -102,20 +107,15 @@ def find_studies_from_study(api_or_db_url, study_list):
 
 
 def _find_studies_from_study_with_db_conn(db_url, study_list):
-    if len(study_list) == 1:
-        study_list = [study_list[0]]
-    # Test connection to the database
-    if not postgres_test(db_url):
-        logger.error("Can't connect to the database")
-        sys.exit()
+    study_list = study_db_connection(db_url, study_list)
     with psycopg2.connect(db_url) as conn:
         logger.info(f"fetching studies: {study_list}")
         studies = pd.read_sql(
             f"""
-SELECT s.kf_id as study_id, 
-       s.name as study_name, 
-       s.program as study_program, 
-       s.short_code as study_short_code, 
+SELECT s.kf_id as study_id,
+       s.name as study_name,
+       s.program as study_program,
+       s.short_code as study_short_code,
        s.short_name as study_name
   FROM study s
  WHERE s.kf_id in ({str(study_list)[1:-1]})
@@ -143,7 +143,7 @@ def _find_studies_from_study_with_http_api(api_url, study_list):
         sys.exit()
     df = pd.DataFrame(studies)
     # get the links
-    df = df[["kf_id", "name", "program", "short_code", "short_name",]].rename(
+    df = df[["kf_id", "name", "program", "short_code", "short_name"]].rename(
         columns={
             "kf_id": "study_id",
             "name": "study_name",
